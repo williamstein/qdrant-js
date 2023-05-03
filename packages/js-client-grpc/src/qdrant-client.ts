@@ -20,7 +20,7 @@ export class QdrantGrpcClient {
     #grcpClients: GrpcClients;
     private _restUri: string;
 
-    constructor({url, host, apiKey, https, prefix, port = 6334, timeout = 300_000}: QdrantGrpcClientParams) {
+    constructor({url, host, apiKey, https, prefix, port = 6334, timeout = 300_000}: QdrantGrpcClientParams = {}) {
         this.#https = https ?? typeof apiKey === 'string';
         this.#scheme = this.#https ? 'https' : 'http';
         this.#prefix = prefix ?? '';

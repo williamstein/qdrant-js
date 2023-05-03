@@ -13,6 +13,12 @@ importers:
       '@changesets/cli':
         specifier: 2.26.1
         version: 2.26.1
+      '@typescript-eslint/eslint-plugin':
+        specifier: 5.57.0
+        version: 5.57.0(@typescript-eslint/parser@5.57.0)(eslint@8.37.0)(typescript@5.0.4)
+      '@typescript-eslint/parser':
+        specifier: 5.57.0
+        version: 5.57.0(eslint@8.37.0)(typescript@5.0.4)
       husky:
         specifier: 8.0.3
         version: 8.0.3
@@ -105,12 +111,6 @@ importers:
       '@types/node':
         specifier: 18.15.11
         version: 18.15.11
-      '@typescript-eslint/eslint-plugin':
-        specifier: 5.57.0
-        version: 5.57.0(@typescript-eslint/parser@5.57.0)(eslint@8.37.0)(typescript@5.0.4)
-      '@typescript-eslint/parser':
-        specifier: 5.57.0
-        version: 5.57.0(eslint@8.37.0)(typescript@5.0.4)
       lint-staged:
         specifier: 13.2.1
         version: 13.2.1

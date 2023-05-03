@@ -1,5 +1,4 @@
 {
-    "ignorePatterns": "src/proto/*",
     "parserOptions": {
         "project": ["./tsconfig.json"]
     }
