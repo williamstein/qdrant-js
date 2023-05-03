@@ -1,4 +1,4 @@
-import {paths} from './openapi/generated_schema.js';
+import {paths} from './openapi/generated-schema.js';
 import {createClusterApi} from './api/cluster-api.js';
 import {createCollectionsApi} from './api/collections-api.js';
 import {createPointsApi} from './api/points-api.js';

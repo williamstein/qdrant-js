@@ -1255,7 +1255,7 @@ export class SearchParams extends Message<SearchParams> {
 
   /**
    *
-   * If set to true, search will ignore quantized vector data
+   * If set to true, search will ignore quantized vector data 
    *
    * @generated from field: optional qdrant.QuantizationSearchParams quantization = 3;
    */
@@ -2531,6 +2531,12 @@ export class Condition extends Message<Condition> {
      */
     value: Filter;
     case: "filter";
+  } | {
+    /**
+     * @generated from field: qdrant.IsNullCondition is_null = 5;
+     */
+    value: IsNullCondition;
+    case: "isNull";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Condition>) {
@@ -2545,6 +2551,7 @@ export class Condition extends Message<Condition> {
     { no: 2, name: "is_empty", kind: "message", T: IsEmptyCondition, oneof: "condition_one_of" },
     { no: 3, name: "has_id", kind: "message", T: HasIdCondition, oneof: "condition_one_of" },
     { no: 4, name: "filter", kind: "message", T: Filter, oneof: "condition_one_of" },
+    { no: 5, name: "is_null", kind: "message", T: IsNullCondition, oneof: "condition_one_of" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Condition {
@@ -2598,6 +2605,43 @@ export class IsEmptyCondition extends Message<IsEmptyCondition> {
 
   static equals(a: IsEmptyCondition | PlainMessage<IsEmptyCondition> | undefined, b: IsEmptyCondition | PlainMessage<IsEmptyCondition> | undefined): boolean {
     return proto3.util.equals(IsEmptyCondition, a, b);
+  }
+}
+
+/**
+ * @generated from message qdrant.IsNullCondition
+ */
+export class IsNullCondition extends Message<IsNullCondition> {
+  /**
+   * @generated from field: string key = 1;
+   */
+  key = "";
+
+  constructor(data?: PartialMessage<IsNullCondition>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "qdrant.IsNullCondition";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): IsNullCondition {
+    return new IsNullCondition().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): IsNullCondition {
+    return new IsNullCondition().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): IsNullCondition {
+    return new IsNullCondition().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: IsNullCondition | PlainMessage<IsNullCondition> | undefined, b: IsNullCondition | PlainMessage<IsNullCondition> | undefined): boolean {
+    return proto3.util.equals(IsNullCondition, a, b);
   }
 }
 
@@ -2662,7 +2706,7 @@ export class FieldCondition extends Message<FieldCondition> {
   range?: Range;
 
   /**
-   * Check if points geo location lies in a given area
+   * Check if points geolocation lies in a given area
    *
    * @generated from field: qdrant.GeoBoundingBox geo_bounding_box = 4;
    */

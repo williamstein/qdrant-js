@@ -230,9 +230,7 @@ async function main() {
 
 main()
     .then((code) => {
-        if (code !== 0) {
-            process.exit(code);
-        }
+        process.exit(code);
     })
     .catch((err) => {
         console.error(err);

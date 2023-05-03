@@ -37,7 +37,7 @@ proto3.util.setEnumType(NullValue, "qdrant.NullValue", [
  * object. The details of that representation are described together
  * with the proto support for the language.
  *
- * The JSON representation for `Struct` is JSON object.
+ * The JSON representation for `Struct` is a JSON object.
  *
  * @generated from message qdrant.Struct
  */
@@ -80,10 +80,10 @@ export class Struct extends Message<Struct> {
 /**
  * `Value` represents a dynamically typed value which can be either
  * null, a number, a string, a boolean, a recursive struct value, or a
- * list of values. A producer of value is expected to set one of that
+ * list of values. A producer of value is expected to set one of those
  * variants, absence of any variant indicates an error.
  *
- * The JSON representation for `Value` is JSON value.
+ * The JSON representation for `Value` is a JSON value.
  *
  * @generated from message qdrant.Value
  */
@@ -188,7 +188,7 @@ export class Value extends Message<Value> {
 /**
  * `ListValue` is a wrapper around a repeated field of values.
  *
- * The JSON representation for `ListValue` is JSON array.
+ * The JSON representation for `ListValue` is a JSON array.
  *
  * @generated from message qdrant.ListValue
  */

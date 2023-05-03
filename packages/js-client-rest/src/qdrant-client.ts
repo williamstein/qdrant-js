@@ -1,7 +1,7 @@
 import {maybe} from '@sevinf/maybe';
 import {OpenApiClient, createApis} from './api-client.js';
-import {QdrantClientNotImplementedError, QdrantClientConfigError} from './errors.js';
-import {RestArgs, SchemaFor} from './types.js';
+import {QdrantClientConfigError} from './errors.js';
+import {PickRenameMulti, RestArgs, SchemaFor} from './types.js';
 
 export type QdrantClientParams = {
     port?: number | null;
@@ -169,19 +169,21 @@ export class QdrantClient {
      *              - 'all' - query all replicas, and return values present in all replicas
      * @example
      *     // Search with filter
-     *     qdrant.search(
+     *     client.search(
      *         collection_name: "test_collection",
-     *         vector: [1.0, 0.1, 0.2, 0.7],
-     *         filter: {
-     *             must: [
-     *                 {
-     *                     key: 'color',
-     *                     range: {
-     *                         color: 'red'
+     *         {
+     *             vector: [1.0, 0.1, 0.2, 0.7],
+     *             filter: {
+     *                 must: [
+     *                     {
+     *                         key: 'color',
+     *                         range: {
+     *                             color: 'red'
+     *                         }
      *                     }
-     *                 }
-     *             ]
-     *         )
+     *                 ]
+     *             )
+     *         }
      *     )
      * @returns List of found close points with similarity scores.
      */
@@ -194,11 +196,13 @@ export class QdrantClient {
             filter,
             params,
             with_payload = true,
-            with_vector = false,
+            with_vectors: with_vector = false,
             score_threshold,
             consistency,
-        }: Omit<SchemaFor<'SearchRequest'>, 'limit'> &
-            Partial<Pick<SchemaFor<'SearchRequest'>, 'limit'>> & {consistency?: SchemaFor<'ReadConsistency'>},
+        }: Partial<Pick<SchemaFor<'SearchRequest'>, 'limit'>> &
+            PickRenameMulti<Omit<SchemaFor<'SearchRequest'>, 'limit'>, {with_vector: 'with_vectors'}> & {
+                consistency?: SchemaFor<'ReadConsistency'>;
+            },
     ) {
         const response = await this._openApiClient.points.searchPoints({
             collection_name,
@@ -974,8 +978,8 @@ export class QdrantClient {
         return maybe(response).orThrow('Create collection returned empty');
     }
 
-    async uploadRecords() {
-        return Promise.reject(new QdrantClientNotImplementedError('uploadRecords()'));
+    async uploadRecords({collection_name, points}: {collection_name: string} & SchemaFor<'PointsList'>) {
+        await this._openApiClient.points.upsertPoints({collection_name, points});
     }
 
     /**
@@ -985,8 +989,8 @@ export class QdrantClient {
      * Note: use `upload_records` method if you want to upload multiple vectors with single payload.
      * @param collection_name Name of the collection to upload to
      */
-    async uploadCollection() {
-        return Promise.reject(new QdrantClientNotImplementedError('uploadCollection()'));
+    async uploadCollection({collection_name, batch}: {collection_name: string} & SchemaFor<'PointsBatch'>) {
+        await this._openApiClient.points.upsertPoints({collection_name, batch});
     }
 
     /**

@@ -42,7 +42,8 @@
         "clean": "rimraf ./dist"
     },
     "dependencies": {
-        "@qdrant/js-client-rest": "workspace:1.1.6"
+        "@qdrant/js-client-rest": "workspace:1.1.6",
+        "@qdrant/js-client-grpc": "workspace:1.1.4"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "15.0.2",

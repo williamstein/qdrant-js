@@ -41,7 +41,7 @@ export function createCollectionsApi(client: Client) {
         /**
          * Delete snapshot for a collection
          */
-        deleteSnapshots: client
+        deleteSnapshot: client
             .path('/collections/{collection_name}/snapshots/{snapshot_name}')
             .method('delete')
             .create({wait: true}),

@@ -1,7 +1,6 @@
 import {maybe} from '@sevinf/maybe';
-import {Transport, createPromiseClient} from '@bufbuild/connect';
-import {createGrpcTransport} from '@bufbuild/connect-node';
-import {Qdrant} from '../src/proto/qdrant_connect.js';
+import {QdrantGrpcClient as QdrantClient} from '../src/index.js';
+import {VectorParams, VectorsConfig} from '../src/proto/collections_pb.js';
 
 process.on('uncaughtException', (e) => {
     console.log(e);
@@ -18,30 +17,21 @@ async function main(): Promise<number> {
     const apiKey = maybe(process.env.QDRANT_API_KEY).orThrow();
     const url = maybe(process.env.QDRANT_URL).orThrow();
 
-    const headers = new Headers();
-    headers.set('api-key', apiKey);
-    // A transport for clients using the gRPC protocol with Node.js `http2` module
-    const transport: Transport = createGrpcTransport({
-        baseUrl: url,
-        httpVersion: '2',
-        nodeOptions: {
-            port: 6334,
-        },
+    const client = new QdrantClient({url, apiKey});
+    const vectorsConfig = new VectorsConfig({
+        config: {case: 'params', value: new VectorParams({distance: 3, size: BigInt(4)})},
     });
+    await client.api('collections').delete({collectionName: 'test'});
+    const response = await client.api('collections').create({collectionName: 'test', vectorsConfig});
 
-    const client = createPromiseClient(Qdrant, transport);
-    const result = await client.healthCheck({}, {headers});
-
-    console.log(result);
+    console.log(response.result);
 
     return 0;
 }
 
 main()
     .then((code) => {
-        if (code !== 0) {
-            process.exit(code);
-        }
+        process.exit(code);
     })
     .catch((err) => {
         console.error(err);

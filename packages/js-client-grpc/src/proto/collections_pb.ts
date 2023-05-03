@@ -190,6 +190,20 @@ export class VectorParams extends Message<VectorParams> {
    */
   distance = Distance.UnknownDistance;
 
+  /**
+   * Configuration of vector HNSW graph. If omitted - the collection configuration will be used
+   *
+   * @generated from field: optional qdrant.HnswConfigDiff hnsw_config = 3;
+   */
+  hnswConfig?: HnswConfigDiff;
+
+  /**
+   * Configuration of vector quantization config. If omitted - the collection configuration will be used
+   *
+   * @generated from field: optional qdrant.QuantizationConfig quantization_config = 4;
+   */
+  quantizationConfig?: QuantizationConfig;
+
   constructor(data?: PartialMessage<VectorParams>) {
     super();
     proto3.util.initPartial(data, this);
@@ -200,6 +214,8 @@ export class VectorParams extends Message<VectorParams> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "size", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
     { no: 2, name: "distance", kind: "enum", T: proto3.getEnumType(Distance) },
+    { no: 3, name: "hnsw_config", kind: "message", T: HnswConfigDiff, opt: true },
+    { no: 4, name: "quantization_config", kind: "message", T: QuantizationConfig, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): VectorParams {
@@ -562,7 +578,7 @@ export class HnswConfigDiff extends Message<HnswConfigDiff> {
 
   /**
    *
-   * Number of neighbours to consider during the index building. Larger the value - more accurate the search, more time required to build index.
+   * Number of neighbours to consider during the index building. Larger the value - more accurate the search, more time required to build the index.
    *
    * @generated from field: optional uint64 ef_construct = 2;
    */
@@ -571,9 +587,9 @@ export class HnswConfigDiff extends Message<HnswConfigDiff> {
   /**
    *
    * Minimal size (in KiloBytes) of vectors for additional payload-based indexing.
-   * If payload chunk is smaller than `full_scan_threshold` additional indexing won't be used -
+   * If the payload chunk is smaller than `full_scan_threshold` additional indexing won't be used -
    * in this case full-scan search should be preferred by query planner and additional indexing is not required.
-   * Note: 1Kb = 1 vector of size 256
+   * Note: 1 Kb = 1 vector of size 256
    *
    * @generated from field: optional uint64 full_scan_threshold = 3;
    */
@@ -589,7 +605,7 @@ export class HnswConfigDiff extends Message<HnswConfigDiff> {
 
   /**
    *
-   * Store HNSW index on disk. If set to false, index will be stored in RAM.
+   * Store HNSW index on disk. If set to false, the index will be stored in RAM.
    *
    * @generated from field: optional bool on_disk = 5;
    */
@@ -705,13 +721,13 @@ export class OptimizersConfigDiff extends Message<OptimizersConfigDiff> {
 
   /**
    *
-   * Target amount of segments optimizer will try to keep.
+   * Target amount of segments the optimizer will try to keep.
    * Real amount of segments may vary depending on multiple parameters:
    *
    * - Amount of stored points.
    * - Current write RPS.
    *
-   * It is recommended to select default number of segments as a factor of the number of search threads,
+   * It is recommended to select the default number of segments as a factor of the number of search threads,
    * so that each segment would be handled evenly by one of the threads.
    *
    * @generated from field: optional uint64 default_segment_number = 3;
@@ -724,7 +740,7 @@ export class OptimizersConfigDiff extends Message<OptimizersConfigDiff> {
    * Large segments might require disproportionately long indexation times,
    * therefore it makes sense to limit the size of segments.
    *
-   * If indexation speed have more priority for your - make this parameter lower.
+   * If indexation speed has more priority for you - make this parameter lower.
    * If search speed is more important - make this parameter higher.
    * Note: 1Kb = 1 vector of size 256
    *
@@ -735,7 +751,7 @@ export class OptimizersConfigDiff extends Message<OptimizersConfigDiff> {
   /**
    *
    * Maximum size (in KiloBytes) of vectors to store in-memory per segment.
-   * Segments larger than this threshold will be stored as read-only memmaped file.
+   * Segments larger than this threshold will be stored as a read-only memmaped file.
    * To enable memmap storage, lower the threshold
    * Note: 1Kb = 1 vector of size 256
    *
@@ -984,6 +1000,8 @@ export class CreateCollection extends Message<CreateCollection> {
   initFromCollection?: string;
 
   /**
+   * Quantization configuration of vector
+   *
    * @generated from field: optional qdrant.QuantizationConfig quantization_config = 14;
    */
   quantizationConfig?: QuantizationConfig;
@@ -1385,7 +1403,7 @@ export class TextIndexParams extends Message<TextIndexParams> {
   tokenizer = TokenizerType.Unknown;
 
   /**
-   * If true - all tokens will be lowercased
+   * If true - all tokens will be lowercase
    *
    * @generated from field: optional bool lowercase = 2;
    */

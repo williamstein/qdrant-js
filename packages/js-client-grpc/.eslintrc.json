@@ -3,7 +3,7 @@
     "env": {
         "node": true
     },
-    "ignorePatterns": "generated-schema.ts",
+    "ignorePatterns": "src/proto/*",
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "project": ["./tsconfig.json"]

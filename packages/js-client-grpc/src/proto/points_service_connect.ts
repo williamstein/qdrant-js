@@ -14,7 +14,7 @@ export const Points = {
   methods: {
     /**
      *
-     * Perform insert + updates on points. If point with given ID already exists - it will be overwritten.
+     * Perform insert + updates on points. If a point with a given ID already exists - it will be overwritten.
      *
      * @generated from rpc qdrant.Points.Upsert
      */
