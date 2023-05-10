@@ -1,5 +1,5 @@
 {
-    "ignorePatterns": "src/openapi/*",
+    "ignorePatterns": ["dist/*", "src/openapi/*"],
     "parserOptions": {
         "project": ["./tsconfig.json"]
     }

@@ -1,0 +1,21 @@
+import {setupServer} from 'msw/node';
+import {rest} from 'msw';
+import {afterAll, afterEach, beforeAll} from 'vitest';
+
+const baseUrl = 'http:/127.0.0.1:6334';
+const uri = new URL('qdrant.Qdrant/HealthCheck', baseUrl).toString();
+const server = setupServer(
+    rest.post(uri, (req, res, ctx) => {
+        console.log('###################################');
+        return res(ctx.status(200), ctx.json(req.headers.get('api-key')));
+    }),
+);
+
+// Start server before all tests
+beforeAll(() => server.listen({onUnhandledRequest: 'error'}));
+
+//  Close server after all tests
+afterAll(() => server.close());
+
+// Reset handlers after each test `important for test isolation`
+afterEach(() => server.resetHandlers());

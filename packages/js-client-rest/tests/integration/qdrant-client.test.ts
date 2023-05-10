@@ -14,31 +14,30 @@ describe('QdrantClient', () => {
         expect(
             await client.createCollection(collectionName, {
                 vectors: {size: 4, distance: 'Dot'},
-                optimizers_config: {default_segment_number: 2},
-                replication_factor: 2,
+                optimizersConfig: {defaultSegmentNumber: 2},
+                replicationFactor: 2,
             }),
         ).toBe(true);
     });
 
     test('create indexes', async () => {
-        let result = await client.createPayloadIndex(collectionName, {field_name: 'city', field_schema: 'keyword'});
+        let result = await client.createPayloadIndex(collectionName, 'city', {fieldSchema: 'keyword'});
         expect(result).toMatchObject<typeof result>({
-            operation_id: expect.any(Number) as number,
+            operationId: expect.any(Number) as number,
             status: 'acknowledged',
         });
 
-        result = await client.createPayloadIndex(collectionName, {field_name: 'count', field_schema: 'integer'});
+        result = await client.createPayloadIndex(collectionName, 'count', {fieldSchema: 'integer'});
         expect(result).toMatchObject<typeof result>({
-            operation_id: expect.any(Number) as number,
+            operationId: expect.any(Number) as number,
             status: 'acknowledged',
         });
 
-        result = await client.createPayloadIndex(collectionName, {
-            field_name: 'coords',
-            field_schema: 'geo',
+        result = await client.createPayloadIndex(collectionName, 'coords', {
+            fieldSchema: 'geo',
             wait: true,
         });
-        expect(result).toMatchObject<typeof result>({operation_id: expect.any(Number) as number, status: 'completed'});
+        expect(result).toMatchObject<typeof result>({operationId: expect.any(Number) as number, status: 'completed'});
     });
 
     test('get collection', async () => {
@@ -67,11 +66,11 @@ describe('QdrantClient', () => {
                 {id: 'f0e09527-b096-42a8-94e9-ea94d342b925', vector: [0.35, 0.08, 0.11, 0.44]},
             ],
         });
-        expect(result).toMatchObject<typeof result>({operation_id: expect.any(Number) as number, status: 'completed'});
+        expect(result).toMatchObject<typeof result>({operationId: expect.any(Number) as number, status: 'completed'});
     });
 
     test('retrieve point', async () => {
-        const result = await client.api('points').getPoint({collection_name: collectionName, id: 2});
+        const result = await client.api('points').getPoint({collectionName, id: 2});
         expect(result.data.result).toBeDefined();
     });
 
@@ -82,8 +81,8 @@ describe('QdrantClient', () => {
 
     test('retrieve all points', async () => {
         const result = await client.getCollection(collectionName);
-        expect(result, 'check failed - 6 points expected').toMatchObject<Pick<typeof result, 'vectors_count'>>({
-            vectors_count: 6,
+        expect(result, 'check failed - 6 points expected').toMatchObject<Pick<typeof result, 'vectorsCount'>>({
+            vectorsCount: 6,
         });
     });
 
@@ -119,12 +118,12 @@ describe('QdrantClient', () => {
                 {
                     vector: [0.2, 0.1, 0.9, 0.7],
                     limit: 3,
-                    with_payload: true,
+                    withPayload: true,
                 },
                 {
                     vector: [0.2, 0.1, 0.9, 0.7],
                     limit: 3,
-                    with_payload: true,
+                    withPayload: true,
                 },
             ],
         });
@@ -157,7 +156,7 @@ describe('QdrantClient', () => {
         }
 
         const result = await client.getLocks();
-        expect(result).toMatchObject<typeof result>({write: true, error_message: reason});
+        expect(result).toMatchObject<typeof result>({write: true, errorMessage: reason});
 
         await client.unlockStorage();
 

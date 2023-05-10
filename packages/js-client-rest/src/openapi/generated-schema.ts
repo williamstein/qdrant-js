@@ -307,30 +307,30 @@ export interface components {
     /** @description Current statistics and configuration of the collection */
     CollectionInfo: {
       status: components["schemas"]["CollectionStatus"];
-      optimizer_status: components["schemas"]["OptimizersStatus"];
+      optimizerStatus: components["schemas"]["OptimizersStatus"];
       /**
        * Format: uint 
        * @description Number of vectors in collection All vectors in collection are available for querying Calculated as `points_count x vectors_per_point` Where `vectors_per_point` is a number of named vectors in schema
        */
-      vectors_count: number;
+      vectorsCount: number;
       /**
        * Format: uint 
        * @description Number of indexed vectors in the collection. Indexed vectors in large segments are faster to query, as it is stored in vector index (HNSW)
        */
-      indexed_vectors_count: number;
+      indexedVectorsCount: number;
       /**
        * Format: uint 
        * @description Number of points (vectors + payloads) in collection Each point could be accessed by unique id
        */
-      points_count: number;
+      pointsCount: number;
       /**
        * Format: uint 
        * @description Number of segments in collection. Each segment has independent vector as payload indexes
        */
-      segments_count: number;
+      segmentsCount: number;
       config: components["schemas"]["CollectionConfig"];
       /** @description Types of stored payload */
-      payload_schema: {
+      payloadSchema: {
         [key: string]: components["schemas"]["PayloadIndexInfo"] | undefined;
       };
     };
@@ -345,11 +345,11 @@ export interface components {
     }]>;
     CollectionConfig: {
       params: components["schemas"]["CollectionParams"];
-      hnsw_config: components["schemas"]["HnswConfig"];
-      optimizer_config: components["schemas"]["OptimizersConfig"];
-      wal_config: components["schemas"]["WalConfig"];
+      hnswConfig: components["schemas"]["HnswConfig"];
+      optimizerConfig: components["schemas"]["OptimizersConfig"];
+      walConfig: components["schemas"]["WalConfig"];
       /** @default null */
-      quantization_config?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
+      quantizationConfig?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
     };
     CollectionParams: {
       vectors: components["schemas"]["VectorsConfig"];
@@ -358,24 +358,24 @@ export interface components {
        * @description Number of shards the collection has 
        * @default 1
        */
-      shard_number?: number;
+      shardNumber?: number;
       /**
        * Format: uint32 
        * @description Number of replicas for each shard 
        * @default 1
        */
-      replication_factor?: number;
+      replicationFactor?: number;
       /**
        * Format: uint32 
        * @description Defines how many replicas should apply the operation for us to consider it successful. Increasing this number will make the collection more resilient to inconsistencies, but will also make it fail if not enough replicas are available. Does not have any performance impact. 
        * @default 1
        */
-      write_consistency_factor?: number;
+      writeConsistencyFactor?: number;
       /**
        * @description If true - point's payload will not be stored in memory. It will be read from the disk every time it is requested. This setting saves RAM by (slightly) increasing the response time. Note: those payload values that are involved in filtering and are indexed - remain in RAM. 
        * @default false
        */
-      on_disk_payload?: boolean;
+      onDiskPayload?: boolean;
     };
     /**
      * @description Vector params separator for single and multiple vector modes Single mode:
@@ -398,9 +398,9 @@ export interface components {
       size: number;
       distance: components["schemas"]["Distance"];
       /** @description Custom params for HNSW index. If none - values from collection configuration are used. */
-      hnsw_config?: components["schemas"]["HnswConfigDiff"] | (Record<string, unknown> | null);
+      hnswConfig?: components["schemas"]["HnswConfigDiff"] | (Record<string, unknown> | null);
       /** @description Custom params for quantization. If none - values from collection configuration are used. */
-      quantization_config?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
+      quantizationConfig?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
     };
     /**
      * @description Type of internal tags, build from payload Distance function types used to compare vectors 
@@ -417,24 +417,24 @@ export interface components {
        * Format: uint 
        * @description Number of neighbours to consider during the index building. Larger the value - more accurate the search, more time required to build the index.
        */
-      ef_construct?: number | null;
+      efConstruct?: number | null;
       /**
        * Format: uint 
        * @description Minimal size (in KiloBytes) of vectors for additional payload-based indexing. If payload chunk is smaller than `full_scan_threshold_kb` additional indexing won't be used - in this case full-scan search should be preferred by query planner and additional indexing is not required. Note: 1Kb = 1 vector of size 256
        */
-      full_scan_threshold?: number | null;
+      fullScanThreshold?: number | null;
       /**
        * Format: uint 
        * @description Number of parallel threads used for background index building. If 0 - auto selection.
        */
-      max_indexing_threads?: number | null;
+      maxIndexingThreads?: number | null;
       /** @description Store HNSW index on disk. If set to false, the index will be stored in RAM. Default: false */
-      on_disk?: boolean | null;
+      onDisk?: boolean | null;
       /**
        * Format: uint 
        * @description Custom M param for additional payload-aware HNSW links. If not set, default M will be used.
        */
-      payload_m?: number | null;
+      payloadM?: number | null;
     };
     QuantizationConfig: components["schemas"]["ScalarQuantization"];
     ScalarQuantization: {
@@ -448,7 +448,7 @@ export interface components {
        */
       quantile?: number | null;
       /** @description If true - quantized vectors always will be stored in RAM, ignoring the config of main storage */
-      always_ram?: boolean | null;
+      alwaysRam?: boolean | null;
     };
     /** @enum {string} */
     ScalarType: "int8";
@@ -463,44 +463,44 @@ export interface components {
        * Format: uint 
        * @description Number of neighbours to consider during the index building. Larger the value - more accurate the search, more time required to build index.
        */
-      ef_construct: number;
+      efConstruct: number;
       /**
        * Format: uint 
        * @description Minimal size (in KiloBytes) of vectors for additional payload-based indexing. If payload chunk is smaller than `full_scan_threshold_kb` additional indexing won't be used - in this case full-scan search should be preferred by query planner and additional indexing is not required. Note: 1Kb = 1 vector of size 256
        */
-      full_scan_threshold: number;
+      fullScanThreshold: number;
       /**
        * Format: uint 
        * @description Number of parallel threads used for background index building. If 0 - auto selection. 
        * @default 0
        */
-      max_indexing_threads?: number;
+      maxIndexingThreads?: number;
       /** @description Store HNSW index on disk. If set to false, index will be stored in RAM. Default: false */
-      on_disk?: boolean | null;
+      onDisk?: boolean | null;
       /**
        * Format: uint 
        * @description Custom M param for hnsw graph built for payload index. If not set, default M will be used.
        */
-      payload_m?: number | null;
+      payloadM?: number | null;
     };
     OptimizersConfig: {
       /**
        * Format: double 
        * @description The minimal fraction of deleted vectors in a segment, required to perform segment optimization
        */
-      deleted_threshold: number;
+      deletedThreshold: number;
       /**
        * Format: uint 
        * @description The minimal number of vectors in a segment, required to perform segment optimization
        */
-      vacuum_min_vector_number: number;
+      vacuumMinVectorNumber: number;
       /**
        * Format: uint 
        * @description Target amount of segments optimizer will try to keep. Real amount of segments may vary depending on multiple parameters: - Amount of stored points - Current write RPS
        * 
        * It is recommended to select default number of segments as a factor of the number of search threads, so that each segment would be handled evenly by one of the threads. If `default_segment_number = 0`, will be automatically selected by the number of available CPUs.
        */
-      default_segment_number: number;
+      defaultSegmentNumber: number;
       /**
        * Format: uint 
        * @description Do not create segments larger this size (in KiloBytes). Large segments might require disproportionately long indexation times, therefore it makes sense to limit the size of segments.
@@ -508,44 +508,44 @@ export interface components {
        * If indexation speed have more priority for your - make this parameter lower. If search speed is more important - make this parameter higher. Note: 1Kb = 1 vector of size 256 If not set, will be automatically selected considering the number of available CPUs. 
        * @default null
        */
-      max_segment_size?: number | null;
+      maxSegmentSize?: number | null;
       /**
        * Format: uint 
        * @description Maximum size (in KiloBytes) of vectors to store in-memory per segment. Segments larger than this threshold will be stored as read-only memmaped file. To enable memmap storage, lower the threshold Note: 1Kb = 1 vector of size 256 If not set, mmap will not be used. 
        * @default null
        */
-      memmap_threshold?: number | null;
+      memmapThreshold?: number | null;
       /**
        * Format: uint 
        * @description Maximum size (in KiloBytes) of vectors allowed for plain index. Default value based on <https://github.com/google-research/google-research/blob/master/scann/docs/algorithms.md> Note: 1Kb = 1 vector of size 256
        */
-      indexing_threshold: number;
+      indexingThreshold: number;
       /**
        * Format: uint64 
        * @description Minimum interval between forced flushes.
        */
-      flush_interval_sec: number;
+      flushIntervalSec: number;
       /**
        * Format: uint 
        * @description Maximum available threads for optimization workers
        */
-      max_optimization_threads: number;
+      maxOptimizationThreads: number;
     };
     WalConfig: {
       /**
        * Format: uint 
        * @description Size of a single WAL segment in MB
        */
-      wal_capacity_mb: number;
+      walCapacityMb: number;
       /**
        * Format: uint 
        * @description Number of WAL segments to create ahead of actually used ones
        */
-      wal_segments_ahead: number;
+      walSegmentsAhead: number;
     };
     /** @description Display payload field type & index information */
     PayloadIndexInfo: {
-      data_type: components["schemas"]["PayloadSchemaType"];
+      dataType: components["schemas"]["PayloadSchemaType"];
       params?: components["schemas"]["PayloadSchemaParams"] | (Record<string, unknown> | null);
       /**
        * Format: uint 
@@ -564,9 +564,9 @@ export interface components {
       type: components["schemas"]["TextIndexType"];
       tokenizer?: components["schemas"]["TokenizerType"];
       /** Format: uint */
-      min_token_len?: number | null;
+      minTokenLen?: number | null;
       /** Format: uint */
-      max_token_len?: number | null;
+      maxTokenLen?: number | null;
       /** @description If true, lowercase all tokens. Default: true */
       lowercase?: boolean | null;
     };
@@ -578,8 +578,8 @@ export interface components {
       /** @description Look for points with ids */
       ids: (components["schemas"]["ExtendedPointId"])[];
       /** @description Select which payload to return with the response. Default: All */
-      with_payload?: components["schemas"]["WithPayloadInterface"] | (Record<string, unknown> | null);
-      with_vector?: components["schemas"]["WithVector"];
+      withPayload?: components["schemas"]["WithPayloadInterface"] | (Record<string, unknown> | null);
+      withVector?: components["schemas"]["WithVector"];
     };
     /** @description Type, used for specifying point ID in user interface */
     ExtendedPointId: number | string;
@@ -631,17 +631,17 @@ export interface components {
        */
       offset?: number;
       /** @description Select which payload to return with the response. Default: None */
-      with_payload?: components["schemas"]["WithPayloadInterface"] | (Record<string, unknown> | null);
+      withPayload?: components["schemas"]["WithPayloadInterface"] | (Record<string, unknown> | null);
       /**
        * @description Whether to return the point vector with the result? 
        * @default null
        */
-      with_vector?: components["schemas"]["WithVector"] | (Record<string, unknown> | null);
+      withVector?: components["schemas"]["WithVector"] | (Record<string, unknown> | null);
       /**
        * Format: float 
        * @description Define a minimal score threshold for the result. If defined, less similar results will not be returned. Score of the returned result might be higher or smaller than the threshold depending on the Distance function used. E.g. for cosine similarity only higher scores will be returned.
        */
-      score_threshold?: number | null;
+      scoreThreshold?: number | null;
     };
     /**
      * @description Vector data separator for named and unnamed modes Unanmed mode:
@@ -666,7 +666,7 @@ export interface components {
       /** @description All conditions must match */
       must?: (components["schemas"]["Condition"])[] | null;
       /** @description All conditions must NOT match */
-      must_not?: (components["schemas"]["Condition"])[] | null;
+      mustNot?: (components["schemas"]["Condition"])[] | null;
     };
     Condition: components["schemas"]["FieldCondition"] | components["schemas"]["IsEmptyCondition"] | components["schemas"]["IsNullCondition"] | components["schemas"]["HasIdCondition"] | components["schemas"]["Filter"];
     /** @description All possible payload filtering conditions */
@@ -678,11 +678,11 @@ export interface components {
       /** @description Check if points value lies in a given range */
       range?: components["schemas"]["Range"] | (Record<string, unknown> | null);
       /** @description Check if points geo location lies in a given area */
-      geo_bounding_box?: components["schemas"]["GeoBoundingBox"] | (Record<string, unknown> | null);
+      geoBoundingBox?: components["schemas"]["GeoBoundingBox"] | (Record<string, unknown> | null);
       /** @description Check if geo point is within a given radius */
-      geo_radius?: components["schemas"]["GeoRadius"] | (Record<string, unknown> | null);
+      geoRadius?: components["schemas"]["GeoRadius"] | (Record<string, unknown> | null);
       /** @description Check number of values of the field */
-      values_count?: components["schemas"]["ValuesCount"] | (Record<string, unknown> | null);
+      valuesCount?: components["schemas"]["ValuesCount"] | (Record<string, unknown> | null);
     };
     /** @description Match filter request */
     Match: components["schemas"]["MatchValue"] | components["schemas"]["MatchText"] | components["schemas"]["MatchAny"];
@@ -729,8 +729,8 @@ export interface components {
      * Matches coordinates inside the rectangle, described by coordinates of lop-left and bottom-right edges
      */
     GeoBoundingBox: {
-      top_left: components["schemas"]["GeoPoint"];
-      bottom_right: components["schemas"]["GeoPoint"];
+      topLeft: components["schemas"]["GeoPoint"];
+      bottomRight: components["schemas"]["GeoPoint"];
     };
     /** @description Geo point payload schema */
     GeoPoint: {
@@ -777,7 +777,7 @@ export interface components {
     };
     /** @description Select points with empty payload for a specified field */
     IsEmptyCondition: {
-      is_empty: components["schemas"]["PayloadField"];
+      isEmpty: components["schemas"]["PayloadField"];
     };
     /** @description Payload field */
     PayloadField: {
@@ -786,11 +786,11 @@ export interface components {
     };
     /** @description Select points with null payload for a specified field */
     IsNullCondition: {
-      is_null: components["schemas"]["PayloadField"];
+      isNull: components["schemas"]["PayloadField"];
     };
     /** @description ID-based filtering condition */
     HasIdCondition: {
-      has_id: (components["schemas"]["ExtendedPointId"])[];
+      hasId: (components["schemas"]["ExtendedPointId"])[];
     };
     /** @description Additional parameters of the search */
     SearchParams: {
@@ -798,7 +798,7 @@ export interface components {
        * Format: uint 
        * @description Params relevant to HNSW index /// Size of the beam in a beam-search. Larger the value - more accurate the result, more time required for search.
        */
-      hnsw_ef?: number | null;
+      hnswEf?: number | null;
       /**
        * @description Search without approximation. If set to true, search may run long but with exact results. 
        * @default false
@@ -846,7 +846,7 @@ export interface components {
        * Format: uint64 
        * @description Sequential number of the operation
        */
-      operation_id: number;
+      operationId: number;
       status: components["schemas"]["UpdateStatus"];
     };
     /**
@@ -883,17 +883,17 @@ export interface components {
        */
       offset?: number;
       /** @description Select which payload to return with the response. Default: None */
-      with_payload?: components["schemas"]["WithPayloadInterface"] | (Record<string, unknown> | null);
+      withPayload?: components["schemas"]["WithPayloadInterface"] | (Record<string, unknown> | null);
       /**
        * @description Whether to return the point vector with the result? 
        * @default null
        */
-      with_vector?: components["schemas"]["WithVector"] | (Record<string, unknown> | null);
+      withVector?: components["schemas"]["WithVector"] | (Record<string, unknown> | null);
       /**
        * Format: float 
        * @description Define a minimal score threshold for the result. If defined, less similar results will not be returned. Score of the returned result might be higher or smaller than the threshold depending on the Distance function used. E.g. for cosine similarity only higher scores will be returned.
        */
-      score_threshold?: number | null;
+      scoreThreshold?: number | null;
       /**
        * @description Define which vector to use for recommendation, if not specified - try to use default vector 
        * @default null
@@ -903,7 +903,7 @@ export interface components {
        * @description The location used to lookup vectors. If not specified - use current collection. Note: the other collection should have the same vector size as the current collection 
        * @default null
        */
-      lookup_from?: components["schemas"]["LookupLocation"] | (Record<string, unknown> | null);
+      lookupFrom?: components["schemas"]["LookupLocation"] | (Record<string, unknown> | null);
     };
     UsingVector: string;
     /** @description Defines a location to use for looking up the vector. Specifies collection and vector field name. */
@@ -928,15 +928,15 @@ export interface components {
       /** @description Look only for points which satisfies this conditions. If not provided - all points. */
       filter?: components["schemas"]["Filter"] | (Record<string, unknown> | null);
       /** @description Select which payload to return with the response. Default: All */
-      with_payload?: components["schemas"]["WithPayloadInterface"] | (Record<string, unknown> | null);
-      with_vector?: components["schemas"]["WithVector"];
+      withPayload?: components["schemas"]["WithPayloadInterface"] | (Record<string, unknown> | null);
+      withVector?: components["schemas"]["WithVector"];
     };
     /** @description Result of the points read request */
     ScrollResult: {
       /** @description List of retrieved points */
       points: (components["schemas"]["Record"])[];
       /** @description Offset which should be used to retrieve a next page result */
-      next_page_offset?: components["schemas"]["ExtendedPointId"] | (Record<string, unknown> | null);
+      nextPageOffset?: components["schemas"]["ExtendedPointId"] | (Record<string, unknown> | null);
     };
     /** @description Operation for creating new collection and (optionally) specify index params */
     CreateCollection: {
@@ -946,98 +946,98 @@ export interface components {
        * @description Number of shards in collection. Default is 1 for standalone, otherwise equal to the number of nodes Minimum is 1 
        * @default null
        */
-      shard_number?: number | null;
+      shardNumber?: number | null;
       /**
        * Format: uint32 
        * @description Number of shards replicas. Default is 1 Minimum is 1 
        * @default null
        */
-      replication_factor?: number | null;
+      replicationFactor?: number | null;
       /**
        * Format: uint32 
        * @description Defines how many replicas should apply the operation for us to consider it successful. Increasing this number will make the collection more resilient to inconsistencies, but will also make it fail if not enough replicas are available. Does not have any performance impact. 
        * @default null
        */
-      write_consistency_factor?: number | null;
+      writeConsistencyFactor?: number | null;
       /**
        * @description If true - point's payload will not be stored in memory. It will be read from the disk every time it is requested. This setting saves RAM by (slightly) increasing the response time. Note: those payload values that are involved in filtering and are indexed - remain in RAM. 
        * @default null
        */
-      on_disk_payload?: boolean | null;
+      onDiskPayload?: boolean | null;
       /** @description Custom params for HNSW index. If none - values from service configuration file are used. */
-      hnsw_config?: components["schemas"]["HnswConfigDiff"] | (Record<string, unknown> | null);
+      hnswConfig?: components["schemas"]["HnswConfigDiff"] | (Record<string, unknown> | null);
       /** @description Custom params for WAL. If none - values from service configuration file are used. */
-      wal_config?: components["schemas"]["WalConfigDiff"] | (Record<string, unknown> | null);
+      walConfig?: components["schemas"]["WalConfigDiff"] | (Record<string, unknown> | null);
       /** @description Custom params for Optimizers.  If none - values from service configuration file are used. */
-      optimizers_config?: components["schemas"]["OptimizersConfigDiff"] | (Record<string, unknown> | null);
+      optimizersConfig?: components["schemas"]["OptimizersConfigDiff"] | (Record<string, unknown> | null);
       /**
        * @description Specify other collection to copy data from. 
        * @default null
        */
-      init_from?: components["schemas"]["InitFrom"] | (Record<string, unknown> | null);
+      initFrom?: components["schemas"]["InitFrom"] | (Record<string, unknown> | null);
       /**
        * @description Quantization parameters. If none - quantization is disabled. 
        * @default null
        */
-      quantization_config?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
+      quantizationConfig?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
     };
     WalConfigDiff: {
       /**
        * Format: uint 
        * @description Size of a single WAL segment in MB
        */
-      wal_capacity_mb?: number | null;
+      walCapacityMb?: number | null;
       /**
        * Format: uint 
        * @description Number of WAL segments to create ahead of actually used ones
        */
-      wal_segments_ahead?: number | null;
+      walSegmentsAhead?: number | null;
     };
     OptimizersConfigDiff: {
       /**
        * Format: double 
        * @description The minimal fraction of deleted vectors in a segment, required to perform segment optimization
        */
-      deleted_threshold?: number | null;
+      deletedThreshold?: number | null;
       /**
        * Format: uint 
        * @description The minimal number of vectors in a segment, required to perform segment optimization
        */
-      vacuum_min_vector_number?: number | null;
+      vacuumMinVectorNumber?: number | null;
       /**
        * Format: uint 
        * @description Target amount of segments optimizer will try to keep. Real amount of segments may vary depending on multiple parameters: - Amount of stored points - Current write RPS
        * 
        * It is recommended to select default number of segments as a factor of the number of search threads, so that each segment would be handled evenly by one of the threads If `default_segment_number = 0`, will be automatically selected by the number of available CPUs
        */
-      default_segment_number?: number | null;
+      defaultSegmentNumber?: number | null;
       /**
        * Format: uint 
        * @description Do not create segments larger this size (in KiloBytes). Large segments might require disproportionately long indexation times, therefore it makes sense to limit the size of segments.
        * 
        * If indexation speed have more priority for your - make this parameter lower. If search speed is more important - make this parameter higher. Note: 1Kb = 1 vector of size 256
        */
-      max_segment_size?: number | null;
+      maxSegmentSize?: number | null;
       /**
        * Format: uint 
        * @description Maximum size (in KiloBytes) of vectors to store in-memory per segment. Segments larger than this threshold will be stored as read-only memmaped file. To enable memmap storage, lower the threshold Note: 1Kb = 1 vector of size 256
        */
-      memmap_threshold?: number | null;
+      memmapThreshold?: number | null;
       /**
        * Format: uint 
        * @description Maximum size (in KiloBytes) of vectors allowed for plain index. Default value based on <https://github.com/google-research/google-research/blob/master/scann/docs/algorithms.md> Note: 1Kb = 1 vector of size 256
        */
-      indexing_threshold?: number | null;
+      indexingThreshold?: number | null;
       /**
        * Format: uint64 
        * @description Minimum interval between forced flushes.
        */
-      flush_interval_sec?: number | null;
+      flushIntervalSec?: number | null;
       /**
        * Format: uint 
        * @description Maximum available threads for optimization workers
        */
-      max_optimization_threads?: number | null;
+      maxOptimizationThreads?: number | null;
     };
     /** @description Operation for creating new collection and (optionally) specify index params */
     InitFrom: {
@@ -1046,7 +1046,7 @@ export interface components {
     /** @description Operation for updating parameters of the existing collection */
     UpdateCollection: {
       /** @description Custom params for Optimizers.  If none - values from service configuration file are used. This operation is blocking, it will only proceed ones all current optimizations are complete */
-      optimizers_config?: components["schemas"]["OptimizersConfigDiff"] | (Record<string, unknown> | null);
+      optimizersConfig?: components["schemas"]["OptimizersConfigDiff"] | (Record<string, unknown> | null);
       /** @description Collection base params.  If none - values from service configuration file are used. */
       params?: components["schemas"]["CollectionParamsDiff"] | (Record<string, unknown> | null);
     };
@@ -1055,12 +1055,12 @@ export interface components {
        * Format: uint32 
        * @description Number of replicas for each shard
        */
-      replication_factor?: number | null;
+      replicationFactor?: number | null;
       /**
        * Format: uint32 
        * @description Minimal number successful responses from replicas to consider operation successful
        */
-      write_consistency_factor?: number | null;
+      writeConsistencyFactor?: number | null;
     };
     /** @description Operation for performing changes of collection aliases. Alias changes are atomic, meaning that no collection modifications can happen between alias operations. */
     ChangeAliasesOperation: {
@@ -1069,33 +1069,33 @@ export interface components {
     /** @description Group of all the possible operations related to collection aliases */
     AliasOperations: components["schemas"]["CreateAliasOperation"] | components["schemas"]["DeleteAliasOperation"] | components["schemas"]["RenameAliasOperation"];
     CreateAliasOperation: {
-      create_alias: components["schemas"]["CreateAlias"];
+      createAlias: components["schemas"]["CreateAlias"];
     };
     /** @description Create alternative name for a collection. Collection will be available under both names for search, retrieve, */
     CreateAlias: {
-      collection_name: string;
-      alias_name: string;
+      collectionName: string;
+      aliasName: string;
     };
     /** @description Delete alias if exists */
     DeleteAliasOperation: {
-      delete_alias: components["schemas"]["DeleteAlias"];
+      deleteAlias: components["schemas"]["DeleteAlias"];
     };
     /** @description Delete alias if exists */
     DeleteAlias: {
-      alias_name: string;
+      aliasName: string;
     };
     /** @description Change alias to a new one */
     RenameAliasOperation: {
-      rename_alias: components["schemas"]["RenameAlias"];
+      renameAlias: components["schemas"]["RenameAlias"];
     };
     /** @description Change alias to a new one */
     RenameAlias: {
-      old_alias_name: string;
-      new_alias_name: string;
+      oldAliasName: string;
+      newAliasName: string;
     };
     CreateFieldIndex: {
-      field_name: string;
-      field_schema?: components["schemas"]["PayloadFieldSchema"] | (Record<string, unknown> | null);
+      fieldName: string;
+      fieldSchema?: components["schemas"]["PayloadFieldSchema"] | (Record<string, unknown> | null);
     };
     PayloadFieldSchema: components["schemas"]["PayloadSchemaType"] | components["schemas"]["PayloadSchemaParams"];
     PointsSelector: components["schemas"]["PointIdsList"] | components["schemas"]["FilterSelector"];
@@ -1152,15 +1152,15 @@ export interface components {
        * Format: uint64 
        * @description ID of this peer
        */
-      peer_id: number;
+      peerId: number;
       /** @description Peers composition of the cluster with main information */
       peers: {
         [key: string]: components["schemas"]["PeerInfo"] | undefined;
       };
-      raft_info: components["schemas"]["RaftInfo"];
-      consensus_thread_status: components["schemas"]["ConsensusThreadStatus"];
+      raftInfo: components["schemas"]["RaftInfo"];
+      consensusThreadStatus: components["schemas"]["ConsensusThreadStatus"];
       /** @description Consequent failures of message send operations in consensus by peer address. On the first success to send to that peer - entry is removed from this hashmap. */
-      message_send_failures: {
+      messageSendFailures: {
         [key: string]: components["schemas"]["MessageSendErrors"] | undefined;
       };
     }]>;
@@ -1184,7 +1184,7 @@ export interface components {
        * Format: uint 
        * @description Number of consensus operations pending to be applied on this peer
        */
-      pending_operations: number;
+      pendingOperations: number;
       /**
        * Format: uint64 
        * @description Leader of the current term
@@ -1193,7 +1193,7 @@ export interface components {
       /** @description Role of this peer in the current term */
       role?: components["schemas"]["StateRole"] | (Record<string, unknown> | null);
       /** @description Is this peer a voter or a learner */
-      is_voter: boolean;
+      isVoter: boolean;
     };
     /**
      * @description Role of the peer in the consensus 
@@ -1203,27 +1203,27 @@ export interface components {
     /** @description Information about current consensus thread status */
     ConsensusThreadStatus: OneOf<[{
       /** @enum {string} */
-      consensus_thread_status: "working";
+      consensusThreadStatus: "working";
       /** Format: date-time */
-      last_update: string;
+      lastUpdate: string;
     }, {
       /** @enum {string} */
-      consensus_thread_status: "stopped";
+      consensusThreadStatus: "stopped";
     }, {
       /** @enum {string} */
-      consensus_thread_status: "stopped_with_err";
+      consensusThreadStatus: "stopped_with_err";
       err: string;
     }]>;
     /** @description Message send failures for a particular peer */
     MessageSendErrors: {
       /** Format: uint */
       count: number;
-      latest_error?: string | null;
+      latestError?: string | null;
     };
     SnapshotDescription: {
       name: string;
       /** Format: partial-date-time */
-      creation_time?: string | null;
+      creationTime?: string | null;
       /** Format: uint64 */
       size: number;
     };
@@ -1250,30 +1250,30 @@ export interface components {
        * Format: uint64 
        * @description ID of this peer
        */
-      peer_id: number;
+      peerId: number;
       /**
        * Format: uint 
        * @description Total number of shards
        */
-      shard_count: number;
+      shardCount: number;
       /** @description Local shards */
-      local_shards: (components["schemas"]["LocalShardInfo"])[];
+      localShards: (components["schemas"]["LocalShardInfo"])[];
       /** @description Remote shards */
-      remote_shards: (components["schemas"]["RemoteShardInfo"])[];
+      remoteShards: (components["schemas"]["RemoteShardInfo"])[];
       /** @description Shard transfers */
-      shard_transfers: (components["schemas"]["ShardTransferInfo"])[];
+      shardTransfers: (components["schemas"]["ShardTransferInfo"])[];
     };
     LocalShardInfo: {
       /**
        * Format: uint32 
        * @description Local shard id
        */
-      shard_id: number;
+      shardId: number;
       /**
        * Format: uint 
        * @description Number of points in the shard
        */
-      points_count: number;
+      pointsCount: number;
       state: components["schemas"]["ReplicaState"];
     };
     /**
@@ -1286,17 +1286,17 @@ export interface components {
        * Format: uint32 
        * @description Remote shard id
        */
-      shard_id: number;
+      shardId: number;
       /**
        * Format: uint64 
        * @description Remote peer id
        */
-      peer_id: number;
+      peerId: number;
       state: components["schemas"]["ReplicaState"];
     };
     ShardTransferInfo: {
       /** Format: uint32 */
-      shard_id: number;
+      shardId: number;
       /** Format: uint64 */
       from: number;
       /** Format: uint64 */
@@ -1321,31 +1321,31 @@ export interface components {
     };
     AppFeaturesTelemetry: {
       debug: boolean;
-      web_feature: boolean;
-      service_debug_feature: boolean;
+      webFeature: boolean;
+      serviceDebugFeature: boolean;
     };
     RunningEnvironmentTelemetry: {
       distribution?: string | null;
-      distribution_version?: string | null;
-      is_docker: boolean;
+      distributionVersion?: string | null;
+      isDocker: boolean;
       /** Format: uint */
       cores?: number | null;
       /** Format: uint */
-      ram_size?: number | null;
+      ramSize?: number | null;
       /** Format: uint */
-      disk_size?: number | null;
-      cpu_flags: string;
+      diskSize?: number | null;
+      cpuFlags: string;
     };
     CollectionsTelemetry: {
       /** Format: uint */
-      number_of_collections: number;
+      numberOfCollections: number;
       collections?: (components["schemas"]["CollectionTelemetryEnum"])[] | null;
     };
     CollectionTelemetryEnum: components["schemas"]["CollectionTelemetry"] | components["schemas"]["CollectionsAggregatedTelemetry"];
     CollectionTelemetry: {
       id: string;
       /** Format: uint64 */
-      init_time_ms: number;
+      initTimeMs: number;
       config: components["schemas"]["CollectionConfig"];
       shards: (components["schemas"]["ReplicaSetTelemetry"])[];
       transfers: (components["schemas"]["ShardTransferInfo"])[];
@@ -1355,36 +1355,36 @@ export interface components {
       id: number;
       local?: components["schemas"]["LocalShardTelemetry"] | (Record<string, unknown> | null);
       remote: (components["schemas"]["RemoteShardTelemetry"])[];
-      replicate_states: {
+      replicateStates: {
         [key: string]: components["schemas"]["ReplicaState"] | undefined;
       };
     };
     LocalShardTelemetry: {
-      variant_name?: string | null;
+      variantName?: string | null;
       segments: (components["schemas"]["SegmentTelemetry"])[];
       optimizations: components["schemas"]["OptimizerTelemetry"];
     };
     SegmentTelemetry: {
       info: components["schemas"]["SegmentInfo"];
       config: components["schemas"]["SegmentConfig"];
-      vector_index_searches: (components["schemas"]["VectorIndexSearchesTelemetry"])[];
-      payload_field_indices: (components["schemas"]["PayloadIndexTelemetry"])[];
+      vectorIndexSearches: (components["schemas"]["VectorIndexSearchesTelemetry"])[];
+      payloadFieldIndices: (components["schemas"]["PayloadIndexTelemetry"])[];
     };
     /** @description Aggregated information about segment */
     SegmentInfo: {
-      segment_type: components["schemas"]["SegmentType"];
+      segmentType: components["schemas"]["SegmentType"];
       /** Format: uint */
-      num_vectors: number;
+      numVectors: number;
       /** Format: uint */
-      num_points: number;
+      numPoints: number;
       /** Format: uint */
-      num_deleted_vectors: number;
+      numDeletedVectors: number;
       /** Format: uint */
-      ram_usage_bytes: number;
+      ramUsageBytes: number;
       /** Format: uint */
-      disk_usage_bytes: number;
-      is_appendable: boolean;
-      index_schema: {
+      diskUsageBytes: number;
+      isAppendable: boolean;
+      indexSchema: {
         [key: string]: components["schemas"]["PayloadIndexInfo"] | undefined;
       };
     };
@@ -1394,17 +1394,17 @@ export interface components {
      */
     SegmentType: "plain" | "indexed" | "special";
     SegmentConfig: {
-      vector_data: {
+      vectorData: {
         [key: string]: components["schemas"]["VectorDataConfig"] | undefined;
       };
       index: components["schemas"]["Indexes"];
-      storage_type: components["schemas"]["StorageType"];
-      payload_storage_type?: components["schemas"]["PayloadStorageType"];
+      storageType: components["schemas"]["StorageType"];
+      payloadStorageType?: components["schemas"]["PayloadStorageType"];
       /**
        * @description Quantization parameters. If none - quantization is disabled. 
        * @default null
        */
-      quantization_config?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
+      quantizationConfig?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
     };
     /** @description Config of single vector data storage */
     VectorDataConfig: {
@@ -1418,12 +1418,12 @@ export interface components {
        * @description Vector specific HNSW config that overrides collection config 
        * @default null
        */
-      hnsw_config?: components["schemas"]["HnswConfig"] | (Record<string, unknown> | null);
+      hnswConfig?: components["schemas"]["HnswConfig"] | (Record<string, unknown> | null);
       /**
        * @description Vector specific quantization config that overrides collection config 
        * @default null
        */
-      quantization_config?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
+      quantizationConfig?: components["schemas"]["QuantizationConfig"] | (Record<string, unknown> | null);
     };
     /** @description Vector index configuration of the segment */
     Indexes: OneOf<[{
@@ -1452,37 +1452,37 @@ export interface components {
       type: "on_disk";
     }]>;
     VectorIndexSearchesTelemetry: {
-      index_name?: string | null;
-      unfiltered_plain: components["schemas"]["OperationDurationStatistics"];
-      unfiltered_hnsw: components["schemas"]["OperationDurationStatistics"];
-      filtered_plain: components["schemas"]["OperationDurationStatistics"];
-      filtered_small_cardinality: components["schemas"]["OperationDurationStatistics"];
-      filtered_large_cardinality: components["schemas"]["OperationDurationStatistics"];
-      filtered_exact: components["schemas"]["OperationDurationStatistics"];
-      unfiltered_exact: components["schemas"]["OperationDurationStatistics"];
+      indexName?: string | null;
+      unfilteredPlain: components["schemas"]["OperationDurationStatistics"];
+      unfilteredHnsw: components["schemas"]["OperationDurationStatistics"];
+      filteredPlain: components["schemas"]["OperationDurationStatistics"];
+      filteredSmallCardinality: components["schemas"]["OperationDurationStatistics"];
+      filteredLargeCardinality: components["schemas"]["OperationDurationStatistics"];
+      filteredExact: components["schemas"]["OperationDurationStatistics"];
+      unfilteredExact: components["schemas"]["OperationDurationStatistics"];
     };
     OperationDurationStatistics: {
       /** Format: uint */
       count: number;
       /** Format: uint */
-      fail_count?: number;
+      failCount?: number;
       /** Format: float */
-      avg_duration_micros?: number | null;
+      avgDurationMicros?: number | null;
       /** Format: float */
-      min_duration_micros?: number | null;
+      minDurationMicros?: number | null;
       /** Format: float */
-      max_duration_micros?: number | null;
+      maxDurationMicros?: number | null;
       /** Format: date-time */
-      last_responded?: string | null;
+      lastResponded?: string | null;
     };
     PayloadIndexTelemetry: {
-      field_name?: string | null;
+      fieldName?: string | null;
       /** Format: uint */
-      points_values_count: number;
+      pointsValuesCount: number;
       /** Format: uint */
-      points_count: number;
+      pointsCount: number;
       /** Format: uint */
-      histogram_bucket_size?: number | null;
+      histogramBucketSize?: number | null;
     };
     OptimizerTelemetry: {
       status: components["schemas"]["OptimizersStatus"];
@@ -1490,16 +1490,16 @@ export interface components {
     };
     RemoteShardTelemetry: {
       /** Format: uint32 */
-      shard_id: number;
+      shardId: number;
       /** Format: uint64 */
-      peer_id?: number | null;
+      peerId?: number | null;
       searches: components["schemas"]["OperationDurationStatistics"];
       updates: components["schemas"]["OperationDurationStatistics"];
     };
     CollectionsAggregatedTelemetry: {
       /** Format: uint */
       vectors: number;
-      optimizers_status: components["schemas"]["OptimizersStatus"];
+      optimizersStatus: components["schemas"]["OptimizersStatus"];
       params: components["schemas"]["CollectionParams"];
     };
     ClusterTelemetry: {
@@ -1509,36 +1509,36 @@ export interface components {
     };
     ClusterStatusTelemetry: {
       /** Format: uint */
-      number_of_peers: number;
+      numberOfPeers: number;
       /** Format: uint64 */
       term: number;
       /** Format: uint64 */
       commit: number;
       /** Format: uint */
-      pending_operations: number;
+      pendingOperations: number;
       role?: components["schemas"]["StateRole"] | (Record<string, unknown> | null);
-      is_voter: boolean;
+      isVoter: boolean;
       /** Format: uint64 */
-      peer_id?: number | null;
-      consensus_thread_status: components["schemas"]["ConsensusThreadStatus"];
+      peerId?: number | null;
+      consensusThreadStatus: components["schemas"]["ConsensusThreadStatus"];
     };
     ClusterConfigTelemetry: {
       /** Format: uint64 */
-      grpc_timeout_ms: number;
+      grpcTimeoutMs: number;
       p2p: components["schemas"]["P2pConfigTelemetry"];
       consensus: components["schemas"]["ConsensusConfigTelemetry"];
     };
     P2pConfigTelemetry: {
       /** Format: uint */
-      connection_pool_size: number;
+      connectionPoolSize: number;
     };
     ConsensusConfigTelemetry: {
       /** Format: uint */
-      max_message_queue_size: number;
+      maxMessageQueueSize: number;
       /** Format: uint64 */
-      tick_period_ms: number;
+      tickPeriodMs: number;
       /** Format: uint64 */
-      bootstrap_timeout_sec: number;
+      bootstrapTimeoutSec: number;
     };
     RequestsTelemetry: {
       rest: components["schemas"]["WebApiTelemetry"];
@@ -1558,30 +1558,30 @@ export interface components {
     };
     ClusterOperations: components["schemas"]["MoveShardOperation"] | components["schemas"]["ReplicateShardOperation"] | components["schemas"]["AbortTransferOperation"] | components["schemas"]["DropReplicaOperation"];
     MoveShardOperation: {
-      move_shard: components["schemas"]["MoveShard"];
+      moveShard: components["schemas"]["MoveShard"];
     };
     MoveShard: {
       /** Format: uint32 */
-      shard_id: number;
+      shardId: number;
       /** Format: uint64 */
-      to_peer_id: number;
+      toPeerId: number;
       /** Format: uint64 */
-      from_peer_id: number;
+      fromPeerId: number;
     };
     ReplicateShardOperation: {
-      replicate_shard: components["schemas"]["MoveShard"];
+      replicateShard: components["schemas"]["MoveShard"];
     };
     AbortTransferOperation: {
-      abort_transfer: components["schemas"]["MoveShard"];
+      abortTransfer: components["schemas"]["MoveShard"];
     };
     DropReplicaOperation: {
-      drop_replica: components["schemas"]["Replica"];
+      dropReplica: components["schemas"]["Replica"];
     };
     Replica: {
       /** Format: uint32 */
-      shard_id: number;
+      shardId: number;
       /** Format: uint64 */
-      peer_id: number;
+      peerId: number;
     };
     SearchRequestBatch: {
       searches: (components["schemas"]["SearchRequest"])[];
@@ -1590,7 +1590,7 @@ export interface components {
       searches: (components["schemas"]["RecommendRequest"])[];
     };
     LocksOption: {
-      error_message?: string | null;
+      errorMessage?: string | null;
       write: boolean;
     };
     SnapshotRecover: {
@@ -1614,8 +1614,8 @@ export interface components {
       aliases: (components["schemas"]["AliasDescription"])[];
     };
     AliasDescription: {
-      alias_name: string;
-      collection_name: string;
+      aliasName: string;
+      collectionName: string;
     };
     /**
      * @description Defines write ordering guarantees for collection operations
@@ -1883,7 +1883,7 @@ export interface operations {
       };
       path: {
         /** @description Id of the peer */
-        peer_id: number;
+        peerId: number;
       };
     };
     responses: {
@@ -1959,7 +1959,7 @@ export interface operations {
     parameters: {
       path: {
         /** @description Name of the collection to retrieve */
-        collection_name: string;
+        collectionName: string;
       };
     };
     responses: {
@@ -2007,7 +2007,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the new collection */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Parameters of a new collection */
@@ -2061,7 +2061,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to delete */
-        collection_name: string;
+        collectionName: string;
       };
     };
     responses: {
@@ -2109,7 +2109,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to update */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description New parameters */
@@ -2209,7 +2209,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Field name */
@@ -2262,9 +2262,9 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection */
-        collection_name: string;
+        collectionName: string;
         /** @description Name of the field where to delete the index */
-        field_name: string;
+        fieldName: string;
       };
     };
     responses: {
@@ -2305,7 +2305,7 @@ export interface operations {
     parameters: {
       path: {
         /** @description Name of the collection to retrieve the cluster info for */
-        collection_name: string;
+        collectionName: string;
       };
     };
     responses: {
@@ -2350,7 +2350,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection on which to to apply the cluster update operation */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Collection cluster update operations */
@@ -2397,7 +2397,7 @@ export interface operations {
     parameters: {
       path: {
         /** @description Name of the collection */
-        collection_name: string;
+        collectionName: string;
       };
     };
     responses: {
@@ -2479,7 +2479,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Snapshot to recover from */
@@ -2547,7 +2547,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Snapshot to recover from */
@@ -2608,7 +2608,7 @@ export interface operations {
     parameters: {
       path: {
         /** @description Name of the collection */
-        collection_name: string;
+        collectionName: string;
       };
     };
     responses: {
@@ -2653,7 +2653,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection for which to create a snapshot */
-        collection_name: string;
+        collectionName: string;
       };
     };
     responses: {
@@ -2708,9 +2708,9 @@ export interface operations {
     parameters: {
       path: {
         /** @description Name of the collection */
-        collection_name: string;
+        collectionName: string;
         /** @description Name of the snapshot to download */
-        snapshot_name: string;
+        snapshotName: string;
       };
     };
     responses: {
@@ -2746,9 +2746,9 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection for which to delete a snapshot */
-        collection_name: string;
+        collectionName: string;
         /** @description Name of the snapshot to delete */
-        snapshot_name: string;
+        snapshotName: string;
       };
     };
     responses: {
@@ -2893,7 +2893,7 @@ export interface operations {
     parameters: {
       path: {
         /** @description Name of the snapshot to download */
-        snapshot_name: string;
+        snapshotName: string;
       };
     };
     responses: {
@@ -2929,7 +2929,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the full snapshot to delete */
-        snapshot_name: string;
+        snapshotName: string;
       };
     };
     responses: {
@@ -2988,7 +2988,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to retrieve from */
-        collection_name: string;
+        collectionName: string;
         /** @description Id of the point */
         id: components["schemas"]["ExtendedPointId"];
       };
@@ -3037,7 +3037,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to update from */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Operation to perform on points */
@@ -3088,7 +3088,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to retrieve from */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description List of points to retrieve */
@@ -3141,7 +3141,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to delete from */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Operation to perform on points */
@@ -3194,7 +3194,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to set from */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Payload and points selector */
@@ -3247,7 +3247,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to set from */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Set payload on points */
@@ -3300,7 +3300,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to delete from */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description delete payload on points */
@@ -3353,7 +3353,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to clear payload from */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description clear payload on points */
@@ -3404,7 +3404,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to retrieve from */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Pagination and filter parameters */
@@ -3455,7 +3455,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to search in */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Search request with optional filtering */
@@ -3506,7 +3506,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to search in */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Search batch request */
@@ -3557,7 +3557,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to search in */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Request points based on positive and negative examples. */
@@ -3608,7 +3608,7 @@ export interface operations {
       };
       path: {
         /** @description Name of the collection to search in */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Request points based on positive and negative examples. */
@@ -3655,7 +3655,7 @@ export interface operations {
     parameters: {
       path: {
         /** @description Name of the collection to count in */
-        collection_name: string;
+        collectionName: string;
       };
     };
     /** @description Request counts of points which matches given filtering condition */
@@ -3694,4 +3694,30 @@ export interface operations {
       };
     };
   };
+}
+
+const fieldRenameMap = {"optimizerStatus":"optimizer_status","optimizer_status":"optimizerStatus","vectorsCount":"vectors_count","vectors_count":"vectorsCount","indexedVectorsCount":"indexed_vectors_count","indexed_vectors_count":"indexedVectorsCount","pointsCount":"points_count","points_count":"pointsCount","segmentsCount":"segments_count","segments_count":"segmentsCount","payloadSchema":"payload_schema","payload_schema":"payloadSchema","hnswConfig":"hnsw_config","hnsw_config":"hnswConfig","optimizerConfig":"optimizer_config","optimizer_config":"optimizerConfig","walConfig":"wal_config","wal_config":"walConfig","quantizationConfig":"quantization_config","quantization_config":"quantizationConfig","shardNumber":"shard_number","shard_number":"shardNumber","replicationFactor":"replication_factor","replication_factor":"replicationFactor","writeConsistencyFactor":"write_consistency_factor","write_consistency_factor":"writeConsistencyFactor","onDiskPayload":"on_disk_payload","on_disk_payload":"onDiskPayload","efConstruct":"ef_construct","ef_construct":"efConstruct","fullScanThreshold":"full_scan_threshold","full_scan_threshold":"fullScanThreshold","maxIndexingThreads":"max_indexing_threads","max_indexing_threads":"maxIndexingThreads","onDisk":"on_disk","on_disk":"onDisk","payloadM":"payload_m","payload_m":"payloadM","alwaysRam":"always_ram","always_ram":"alwaysRam","deletedThreshold":"deleted_threshold","deleted_threshold":"deletedThreshold","vacuumMinVectorNumber":"vacuum_min_vector_number","vacuum_min_vector_number":"vacuumMinVectorNumber","defaultSegmentNumber":"default_segment_number","default_segment_number":"defaultSegmentNumber","maxSegmentSize":"max_segment_size","max_segment_size":"maxSegmentSize","memmapThreshold":"memmap_threshold","memmap_threshold":"memmapThreshold","indexingThreshold":"indexing_threshold","indexing_threshold":"indexingThreshold","flushIntervalSec":"flush_interval_sec","flush_interval_sec":"flushIntervalSec","maxOptimizationThreads":"max_optimization_threads","max_optimization_threads":"maxOptimizationThreads","walCapacityMb":"wal_capacity_mb","wal_capacity_mb":"walCapacityMb","walSegmentsAhead":"wal_segments_ahead","wal_segments_ahead":"walSegmentsAhead","dataType":"data_type","data_type":"dataType","minTokenLen":"min_token_len","min_token_len":"minTokenLen","maxTokenLen":"max_token_len","max_token_len":"maxTokenLen","withPayload":"with_payload","with_payload":"withPayload","withVector":"with_vector","with_vector":"withVector","scoreThreshold":"score_threshold","score_threshold":"scoreThreshold","mustNot":"must_not","must_not":"mustNot","geoBoundingBox":"geo_bounding_box","geo_bounding_box":"geoBoundingBox","geoRadius":"geo_radius","geo_radius":"geoRadius","valuesCount":"values_count","values_count":"valuesCount","topLeft":"top_left","top_left":"topLeft","bottomRight":"bottom_right","bottom_right":"bottomRight","isEmpty":"is_empty","is_empty":"isEmpty","isNull":"is_null","is_null":"isNull","hasId":"has_id","has_id":"hasId","hnswEf":"hnsw_ef","hnsw_ef":"hnswEf","operationId":"operation_id","operation_id":"operationId","lookupFrom":"lookup_from","lookup_from":"lookupFrom","nextPageOffset":"next_page_offset","next_page_offset":"nextPageOffset","optimizersConfig":"optimizers_config","optimizers_config":"optimizersConfig","initFrom":"init_from","init_from":"initFrom","createAlias":"create_alias","create_alias":"createAlias","collectionName":"collection_name","collection_name":"collectionName","aliasName":"alias_name","alias_name":"aliasName","deleteAlias":"delete_alias","delete_alias":"deleteAlias","renameAlias":"rename_alias","rename_alias":"renameAlias","oldAliasName":"old_alias_name","old_alias_name":"oldAliasName","newAliasName":"new_alias_name","new_alias_name":"newAliasName","fieldName":"field_name","field_name":"fieldName","fieldSchema":"field_schema","field_schema":"fieldSchema","peerId":"peer_id","peer_id":"peerId","raftInfo":"raft_info","raft_info":"raftInfo","consensusThreadStatus":"consensus_thread_status","consensus_thread_status":"consensusThreadStatus","messageSendFailures":"message_send_failures","message_send_failures":"messageSendFailures","pendingOperations":"pending_operations","pending_operations":"pendingOperations","isVoter":"is_voter","is_voter":"isVoter","lastUpdate":"last_update","last_update":"lastUpdate","latestError":"latest_error","latest_error":"latestError","creationTime":"creation_time","creation_time":"creationTime","shardCount":"shard_count","shard_count":"shardCount","localShards":"local_shards","local_shards":"localShards","remoteShards":"remote_shards","remote_shards":"remoteShards","shardTransfers":"shard_transfers","shard_transfers":"shardTransfers","shardId":"shard_id","shard_id":"shardId","webFeature":"web_feature","web_feature":"webFeature","serviceDebugFeature":"service_debug_feature","service_debug_feature":"serviceDebugFeature","distributionVersion":"distribution_version","distribution_version":"distributionVersion","isDocker":"is_docker","is_docker":"isDocker","ramSize":"ram_size","ram_size":"ramSize","diskSize":"disk_size","disk_size":"diskSize","cpuFlags":"cpu_flags","cpu_flags":"cpuFlags","numberOfCollections":"number_of_collections","number_of_collections":"numberOfCollections","initTimeMs":"init_time_ms","init_time_ms":"initTimeMs","replicateStates":"replicate_states","replicate_states":"replicateStates","variantName":"variant_name","variant_name":"variantName","vectorIndexSearches":"vector_index_searches","vector_index_searches":"vectorIndexSearches","payloadFieldIndices":"payload_field_indices","payload_field_indices":"payloadFieldIndices","segmentType":"segment_type","segment_type":"segmentType","numVectors":"num_vectors","num_vectors":"numVectors","numPoints":"num_points","num_points":"numPoints","numDeletedVectors":"num_deleted_vectors","num_deleted_vectors":"numDeletedVectors","ramUsageBytes":"ram_usage_bytes","ram_usage_bytes":"ramUsageBytes","diskUsageBytes":"disk_usage_bytes","disk_usage_bytes":"diskUsageBytes","isAppendable":"is_appendable","is_appendable":"isAppendable","indexSchema":"index_schema","index_schema":"indexSchema","vectorData":"vector_data","vector_data":"vectorData","storageType":"storage_type","storage_type":"storageType","payloadStorageType":"payload_storage_type","payload_storage_type":"payloadStorageType","indexName":"index_name","index_name":"indexName","unfilteredPlain":"unfiltered_plain","unfiltered_plain":"unfilteredPlain","unfilteredHnsw":"unfiltered_hnsw","unfiltered_hnsw":"unfilteredHnsw","filteredPlain":"filtered_plain","filtered_plain":"filteredPlain","filteredSmallCardinality":"filtered_small_cardinality","filtered_small_cardinality":"filteredSmallCardinality","filteredLargeCardinality":"filtered_large_cardinality","filtered_large_cardinality":"filteredLargeCardinality","filteredExact":"filtered_exact","filtered_exact":"filteredExact","unfilteredExact":"unfiltered_exact","unfiltered_exact":"unfilteredExact","failCount":"fail_count","fail_count":"failCount","avgDurationMicros":"avg_duration_micros","avg_duration_micros":"avgDurationMicros","minDurationMicros":"min_duration_micros","min_duration_micros":"minDurationMicros","maxDurationMicros":"max_duration_micros","max_duration_micros":"maxDurationMicros","lastResponded":"last_responded","last_responded":"lastResponded","pointsValuesCount":"points_values_count","points_values_count":"pointsValuesCount","histogramBucketSize":"histogram_bucket_size","histogram_bucket_size":"histogramBucketSize","optimizersStatus":"optimizers_status","optimizers_status":"optimizersStatus","numberOfPeers":"number_of_peers","number_of_peers":"numberOfPeers","grpcTimeoutMs":"grpc_timeout_ms","grpc_timeout_ms":"grpcTimeoutMs","connectionPoolSize":"connection_pool_size","connection_pool_size":"connectionPoolSize","maxMessageQueueSize":"max_message_queue_size","max_message_queue_size":"maxMessageQueueSize","tickPeriodMs":"tick_period_ms","tick_period_ms":"tickPeriodMs","bootstrapTimeoutSec":"bootstrap_timeout_sec","bootstrap_timeout_sec":"bootstrapTimeoutSec","moveShard":"move_shard","move_shard":"moveShard","toPeerId":"to_peer_id","to_peer_id":"toPeerId","fromPeerId":"from_peer_id","from_peer_id":"fromPeerId","replicateShard":"replicate_shard","replicate_shard":"replicateShard","abortTransfer":"abort_transfer","abort_transfer":"abortTransfer","dropReplica":"drop_replica","drop_replica":"dropReplica","errorMessage":"error_message","error_message":"errorMessage","anonymize":"anonymize","force":"force","timeout":"timeout","wait":"wait","ordering":"ordering","priority":"priority","snapshotName":"snapshot_name","snapshot_name":"snapshotName","consistency":"consistency","id":"id"};
+
+function isObject(value: unknown): value is Record<string, unknown> {
+        return Object.prototype.toString.call(value) === '[object Object]';
+}
+
+function isPropInObject<T>(obj: T, key: PropertyKey): key is keyof T {
+        return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+export function normalizeFields(source: Record<string, unknown> | unknown): Record<string, unknown> | unknown {
+        if (Array.isArray(source)) {
+            return source.map((value) => normalizeFields(value));
+        }
+        else if (isObject(source)) {
+            for (const key of Object.keys(source)) {
+                if (isPropInObject(fieldRenameMap, key)) {
+                    const newKey = fieldRenameMap[key];
+                    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                    delete Object.assign(source, { [newKey]: normalizeFields(source[key]) })[key];
+                }
+            }
+        }
+        return source;
 }

@@ -1,6 +1,6 @@
 {
     "name": "@qdrant/js-client-rest",
-    "version": "1.1.6",
+    "version": "1.2.0",
     "engines": {
         "node": ">=18.0.0",
         "pnpm": ">=8"
@@ -15,24 +15,25 @@
     "homepage": "https://github.com/qdrant/qdrant-js#readme",
     "license": "Apache-2.0",
     "type": "module",
-    "main": "./dist/cjs/index.js",
-    "module": "./dist/esm/index.js",
-    "browser": "./dist/browser/index.js",
-    "types": "./dist/types/index.d.ts",
     "exports": {
         ".": {
-            "require": "./dist/cjs/index.js",
-            "browser": "./dist/browser/index.js",
             "types": "./dist/types/index.d.ts",
+            "browser": "./dist/browser/index.js",
+            "require": "./dist/cjs/index.js",
             "default": "./dist/esm/index.js"
         }
     },
+    "types": "./dist/types/index.d.ts",
+    "browser": "./dist/browser/index.js",
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/esm/index.js",
     "files": [
         "dist"
     ],
     "publishConfig": {
         "access": "public"
     },
+    "sideEffects": false,
     "scripts": {
         "build": "pnpm tsc:build && pnpm bundle",
         "test": "vitest run",
@@ -46,10 +47,7 @@
         "bundle": "rollup -c rollup.config.js",
         "lint": "eslint src",
         "clean": "rimraf ./dist",
-        "codegen:openapi-typescript": "openapi-typescript $npm_package_config_openapi_schema_remote --output src/openapi/generated-schema.ts"
-    },
-    "config": {
-        "openapi_schema_remote": "https://raw.githubusercontent.com/qdrant/qdrant/master/docs/redoc/master/openapi.json"
+        "codegen:openapi-typescript": "node --loader ts-node/esm scripts/generate-openapi-schema.ts"
     },
     "lint-staged": {
         "*.ts": [
@@ -60,21 +58,18 @@
     },
     "dependencies": {
         "@sevinf/maybe": "^0.5.0",
-        "@qdrant/openapi-typescript-fetch": "^1.2.0"
+        "@qdrant/openapi-typescript-fetch": "^1.2.0",
+        "undici": "^5.22.1"
     },
     "devDependencies": {
-        "@rollup/plugin-node-resolve": "15.0.2",
-        "@rollup/plugin-replace": "5.0.2",
-        "@rollup/plugin-terser": "0.4.0",
-        "@types/node": "18.15.11",
-        "lint-staged": "13.2.1",
-        "openapi-typescript": "6.2.0",
-        "rimraf": "5.0.0",
-        "rollup": "3.20.2",
-        "ts-node": "10.9.1",
-        "ts-prune": "0.10.3",
-        "typescript": "5.0.4",
-        "vitest": "0.29.8"
+        "@rollup/plugin-commonjs": "^24.1.0",
+        "@rollup/plugin-replace": "^5.0.2",
+        "@total-typescript/ts-reset": "^0.4.2",
+        "lint-staged": "^13.2.2",
+        "openapi-typescript": "^6.2.4",
+        "ts-morph": "^18.0.0",
+        "ts-prune": "^0.10.3",
+        "vitest": "^0.31.0"
     },
     "peerDependencies": {
         "typescript": ">=4.1"

@@ -1,5 +1,5 @@
 import {test, expect} from 'vitest';
-import {QdrantGrpcClient as QdrantClient} from '../../src/qdrant-client.js';
+import {QdrantClient as QdrantClient} from '../../src/qdrant-client.js';
 import {QdrantClientConfigError} from '../../src/errors.js';
 
 test('QdrantClient()', () => {

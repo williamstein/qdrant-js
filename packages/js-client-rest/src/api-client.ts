@@ -1,12 +1,13 @@
-import {paths} from './openapi/generated-schema.js';
+import {Fetcher, Middleware, OpArgType, TypedFetch} from '@qdrant/openapi-typescript-fetch';
+import {normalizeFields, operations, paths} from './openapi/generated-schema.js';
+import {createDispatcher} from './dispatcher.js';
 import {createClusterApi} from './api/cluster-api.js';
 import {createCollectionsApi} from './api/collections-api.js';
 import {createPointsApi} from './api/points-api.js';
 import {createServiceApi} from './api/service-api.js';
 import {createSnapshotsApi} from './api/snapshots-api.js';
 import {QdrantClientTimeoutError, QdrantClientUnexpectedResponseError} from './errors.js';
-import {RestArgs} from './types.js';
-import {Fetcher, Middleware} from '@qdrant/openapi-typescript-fetch';
+import {RestArgs, Unionize} from './types.js';
 
 export type Client = ReturnType<typeof Fetcher.for<paths>>;
 
@@ -42,6 +43,7 @@ export function createClient(baseUrl: string, {headers, timeout}: RestArgs): Cli
             }
         });
     }
+
     use.push(async (url, init, next) => {
         const response = await next(url, init);
         if (response.status === 200 || response.status === 201) {
@@ -51,7 +53,30 @@ export function createClient(baseUrl: string, {headers, timeout}: RestArgs): Cli
     });
 
     const client = Fetcher.for<paths>();
-    client.configure({baseUrl, init: {headers}, use});
+    // Configure client with 'undici' agent which is used in Node 18+
+    client.configure({
+        baseUrl,
+        init: {
+            headers,
+            dispatcher:
+                typeof process !== 'undefined' &&
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                process.versions?.node
+                    ? createDispatcher()
+                    : undefined,
+        },
+        use,
+    });
 
     return client;
+}
+
+/**
+ * Transforms request body into snake case and response body into camel-cased keys recursively
+ */
+export function withFieldsMask<T extends Unionize<operations>>(fn: TypedFetch<T>) {
+    return async (arg: OpArgType<T>, init?: RequestInit) => {
+        const response = await fn(normalizeFields(arg) as OpArgType<T>, init);
+        return Object.assign(response, {data: normalizeFields(response.data)});
+    };
 }

@@ -1,4 +1,4 @@
-export {QdrantGrpcClient, QdrantGrpcClientParams} from './qdrant-client.js';
+export {QdrantClient, QdrantClientParams} from './qdrant-client.js';
 export * from './proto/collections_pb.js';
 export * from './proto/json_with_int_pb.js';
 export * from './proto/points_pb.js';

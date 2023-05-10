@@ -49,7 +49,18 @@ function createClients(transport: Transport) {
 }
 
 export function createApis(baseUrl: string, {timeout, apiKey}: {timeout: number; apiKey?: string}): GrpcClients {
-    const interceptors: Interceptor[] = [];
+    const interceptors: Interceptor[] = [
+        (next) => (req) => {
+            req.header.set('user-agent', 'qdrant-js');
+            return next(req);
+        },
+    ];
+    if (apiKey !== undefined) {
+        interceptors.push((next) => (req) => {
+            req.header.set('api-key', apiKey);
+            return next(req);
+        });
+    }
     if (Number.isFinite(timeout)) {
         interceptors.push((next) => async (req) => {
             const controller = new AbortController();
@@ -66,15 +77,10 @@ export function createApis(baseUrl: string, {timeout, apiKey}: {timeout: number;
             }
         });
     }
-    if (apiKey !== undefined) {
-        interceptors.push((next) => async (req) => {
-            req.header.set('api-key', apiKey);
-            return await next(req);
-        });
-    }
+
     const transport = createGrpcTransport({
         baseUrl,
-        httpVersion: apiKey ? '2' : '1.1',
+        httpVersion: '2',
         keepSessionAlive: true,
         useBinaryFormat: true,
         sendCompression: compressionGzip,

@@ -1,7 +1,7 @@
 import {GrpcClients, createApis} from './api-client.js';
 import {QdrantClientConfigError} from './errors.js';
 
-export type QdrantGrpcClientParams = {
+export type QdrantClientParams = {
     port?: number | null;
     apiKey?: string;
     https?: boolean;
@@ -11,7 +11,7 @@ export type QdrantGrpcClientParams = {
     timeout?: number;
 };
 
-export class QdrantGrpcClient {
+export class QdrantClient {
     #https: boolean;
     #scheme: string;
     #port: number | null;
@@ -20,7 +20,7 @@ export class QdrantGrpcClient {
     #grcpClients: GrpcClients;
     private _restUri: string;
 
-    constructor({url, host, apiKey, https, prefix, port = 6334, timeout = 300_000}: QdrantGrpcClientParams = {}) {
+    constructor({url, host, apiKey, https, prefix, port = 6334, timeout = 300_000}: QdrantClientParams = {}) {
         this.#https = https ?? typeof apiKey === 'string';
         this.#scheme = this.#https ? 'https' : 'http';
         this.#prefix = prefix ?? '';

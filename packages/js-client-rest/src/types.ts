@@ -7,6 +7,24 @@ export interface RestArgs {
 
 export type SchemaFor<K extends keyof T, T extends object = components['schemas']> = T[K];
 
+export type Writeable<T> = {-readonly [P in keyof T]: T[P]};
+
+export type Unionize<T extends object> = {
+    [K in keyof T]: T[K];
+}[keyof T];
+
+type CamelizeString<T extends string> = T extends `${infer F}_${infer R}` ? `${F}${Capitalize<CamelizeString<R>>}` : T;
+
+export type Camelize<T> = {
+    [K in keyof T as CamelizeString<K & string>]: T[K] extends (infer A)[]
+        ? A extends Record<string, unknown>
+            ? Camelize<A>[]
+            : T[K]
+        : T[K] extends Record<string, unknown>
+        ? Camelize<T[K]>
+        : T[K];
+};
+
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 type OperationResponses<
     K extends keyof T,

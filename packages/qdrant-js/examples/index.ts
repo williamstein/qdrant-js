@@ -1,5 +1,5 @@
-import {maybe} from '@sevinf/maybe';
-import {QdrantClient} from '../src/index.js';
+import {QdrantClient} from '@qdrant/qdrant-js';
+import {QdrantClient as QdrantGrpcClient} from '@qdrant/qdrant-js/grpc';
 
 process.on('uncaughtException', (e) => {
     console.log(e);
@@ -14,13 +14,17 @@ process.once('SIGINT', () => {
 
 async function main(): Promise<number> {
     const apiKey = process.env.QDRANT_API_KEY;
-    const url = maybe(process.env.QDRANT_URL).orThrow();
+    const url = process.env.QDRANT_URL;
 
     const client = new QdrantClient({url, apiKey});
 
-    await client.api('collections').delete({collectionName: 'test'});
+    console.log(await client.api('service').telemetry({}));
 
-    const response = await client.api('collections').create({
+    const grpcClient = new QdrantGrpcClient({url, apiKey});
+
+    await grpcClient.api('collections').delete({collectionName: 'test'});
+
+    const response = await grpcClient.api('collections').create({
         collectionName: 'test',
         vectorsConfig: {
             config: {case: 'params', value: {distance: 3, size: BigInt(4)}},
